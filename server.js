@@ -44,7 +44,7 @@ app.post('/signedrequest', function(req, res) {
         console.log('Contact from signed request context', contact);
 
         QRCode.toDataURL(text, function(err, url) {
-            res.render('index', {context: context, imgUrl: url, sr: JSON.stringify(signedRequest)});
+            res.render('index', {context: context, imgSrc: url, sr: JSON.stringify(signedRequest)});
         });
     });
 });
