@@ -48,7 +48,7 @@ app.post('/signedrequest', function(req, res) {
 });
 
 app.get('/oauth', function(req, res) {
-    res.render('oauth');
+    res.render('oauth', {consumerKey: env.CONSUMER_KEY});
 });
 
 app.set('port', process.env.PORT || 5000);

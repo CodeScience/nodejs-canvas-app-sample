@@ -16,7 +16,7 @@
                     {uri : uri,
                         params: {
                             response_type : "token",
-                            client_id : "<%= env.CONSUMER_KEY %>",
+                            client_id : "<%= consumerKey %>",
                             redirect_uri : encodeURIComponent(window.location.protocol + "//" + window.location.hostname + "/callback.html")
                         }});
             }
