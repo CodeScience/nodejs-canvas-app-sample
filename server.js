@@ -1,15 +1,15 @@
 var express = require('express'),
-    bodyParser = require('body-parser'),
-    // request = require('request'),
+    request = require('request'),
     QRCode = require('qrcode'),
     decode = require('salesforce-signed-request'),
-
     consumerSecret = process.env.CONSUMER_SECRET,
-
     app = express();
 
 app.set('view engine', 'ejs');
-app.use(bodyParser()); // pull information from html in POST
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use(express.static(__dirname + '/public'));
 
 app.post('/signedrequest', function(req, res) {
@@ -40,7 +40,7 @@ app.post('/signedrequest', function(req, res) {
             text = 'MECARD:N:' + contact.LastName + ',' + contact.FirstName + ';TEL:' + contact.Phone + ';EMAIL:' + contact.Email + ';;';
 
         console.log('Contact from signed request context', contact);
-        
+
         QRCode.toDataURL(text, function(err, url) {
             res.render('index', {context: context, imgUrl: url, sr: JSON.stringify(signedRequest)});
         });
