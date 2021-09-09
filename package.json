@@ -8,6 +8,6 @@
     "body-parser": "~1.2.2",
     "request": ">=2.68.0",
     "ejs": ">=2.5.5",
-    "qrcode-npm": "0.0.3"
+    "qrcode-npm": "1.4.4"
   }
 }

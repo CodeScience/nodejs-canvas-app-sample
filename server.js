@@ -1,7 +1,7 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
     // request = require('request'),
-    qrcode = require('qrcode-npm'),
+    QRCode = require('qrcode'),
     decode = require('salesforce-signed-request'),
 
     consumerSecret = process.env.CONSUMER_SECRET,
@@ -31,13 +31,11 @@ app.post('/signedrequest', function(req, res) {
         };
 
     request(contactRequest, function(err, response, body) {
-        var qr = qrcode.qrcode(4, 'L'),
-            contact = context.environment.record,
+        var contact = context.environment.record,
             text = 'MECARD:N:' + contact.LastName + ',' + contact.FirstName + ';TEL:' + contact.Phone + ';EMAIL:' + contact.Email + ';;';
-        qr.addData(text);
-        qr.make();
-        var imgTag = qr.createImgTag(4);
-        res.render('index', {context: context, imgTag: imgTag, sr: JSON.stringify(signedRequest)});
+        QRCode.toDataURL(text, function(err, url) {
+            res.render('index', {context: context, imgUrl: url, sr: JSON.stringify(signedRequest)});
+        });
     });
 });
 
