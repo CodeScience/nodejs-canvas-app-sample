@@ -1,0 +1,13 @@
+{
+  "name": "CanvasDemo",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "~4.3.1",
+    "salesforce-signed-request": "0.0.1",
+    "body-parser": "~1.2.2",
+    "request": "~2.36.0",
+    "ejs": "~1.0.0",
+    "qrcode-npm": "0.0.3"
+  }
+}

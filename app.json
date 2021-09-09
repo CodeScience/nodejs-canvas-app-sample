@@ -1,0 +1,9 @@
+{
+    "name": "Canvas Demo",
+    "description": "Salesforce Canvas Demo",
+    "repository": "https://github.com/CodeScience/nodejs-canvas-app-sample",
+    "env": {
+        "CONSUMER_KEY": "3MVG9OI03ecbG2Vqiwqvklznq...",
+        "CONSUMER_SECRET": "21B5054D4C9D53D..."
+    }
+}
