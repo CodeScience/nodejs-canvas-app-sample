@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "~4.3.1",
+    "express": ">=4.5.0",
     "salesforce-signed-request": "0.0.1",
     "body-parser": "~1.2.2",
-    "request": "~2.36.0",
-    "ejs": "~1.0.0",
+    "request": ">=2.68.0",
+    "ejs": ">=2.5.5",
     "qrcode-npm": "0.0.3"
   }
 }
