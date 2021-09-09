@@ -2,6 +2,7 @@ var express = require('express'),
     request = require('request'),
     QRCode = require('qrcode'),
     decode = require('salesforce-signed-request'),
+    consumerKey = process.env.CONSUMER_KEY,
     consumerSecret = process.env.CONSUMER_SECRET,
     app = express();
 
@@ -16,12 +17,13 @@ app.post('/signedrequest', function(req, res) {
     console.log('I got signedrequest', req.body.signed_request);
 
     // You could save this information in the user session if needed
-    var signedRequest = decode(req.body.signed_request, consumerSecret),
-        context = signedRequest.context,
-        oauthToken = signedRequest.client.oauthToken,
-        instanceUrl = signedRequest.client.instanceUrl;
+    var signedRequest = decode(req.body.signed_request, consumerSecret);
 
     console.log('I decoded signedrequest', signedRequest);
+
+    var context = signedRequest.context,
+        oauthToken = signedRequest.client.oauthToken,
+        instanceUrl = signedRequest.client.instanceUrl;
 
     // this is not necessary but documented here for demo
     var query = "SELECT Id, FirstName, LastName, Phone, Email FROM Contact WHERE Id = '" + context.environment.record.Id + "'";
@@ -48,7 +50,7 @@ app.post('/signedrequest', function(req, res) {
 });
 
 app.get('/oauth', function(req, res) {
-    res.render('oauth', {consumerKey: env.CONSUMER_KEY});
+    res.render('oauth', {consumerKey: consumerKey});
 });
 
 app.set('port', process.env.PORT || 5000);
