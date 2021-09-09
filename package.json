@@ -5,9 +5,9 @@
   "dependencies": {
     "express": ">=4.5.0",
     "salesforce-signed-request": "0.0.1",
-    "body-parser": "~1.2.2",
+    "body-parser": ">=1.19.0",
     "request": ">=2.68.0",
     "ejs": ">=2.5.5",
-    "qrcode-npm": "1.4.4"
+    "qrcode": "1.4.4"
   }
 }
