@@ -2,8 +2,8 @@ var express = require('express'),
     request = require('request'),
     QRCode = require('qrcode'),
     decode = require('salesforce-signed-request'),
-    consumerKey = process.env.CONSUMER_KEY,
-    consumerSecret = process.env.CONSUMER_SECRET,
+    oauthConsumerSecret = process.env.OAUTH_CONSUMER_SECRET,
+    signedRequestConsumerSecret = process.env.SIGNED_REQUEST_CONSUMER_SECRET,
     app = express();
 
 app.set('view engine', 'ejs');
@@ -17,7 +17,7 @@ app.post('/signedrequest', function(req, res) {
     console.log('I got signedrequest', req.body.signed_request);
 
     // You could save this information in the user session if needed
-    var signedRequest = decode(req.body.signed_request, consumerSecret);
+    var signedRequest = decode(req.body.signed_request, signedRequestConsumerSecret);
 
     console.log('I decoded signedrequest', signedRequest);
 
@@ -50,7 +50,7 @@ app.post('/signedrequest', function(req, res) {
 });
 
 app.get('/oauth', function(req, res) {
-    res.render('oauth', {consumerKey: consumerKey});
+    res.render('oauth', {consumerSecret: oauthConsumerSecret});
 });
 
 app.set('port', process.env.PORT || 5000);
