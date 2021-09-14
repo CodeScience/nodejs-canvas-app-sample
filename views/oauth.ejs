@@ -17,7 +17,7 @@
 							response_type: "token",
 							client_id: "<%= consumerKey %>",
 							redirect_uri: encodeURIComponent(window.location.protocol + "//" + window.location.hostname + "/callback.html"),
-						},
+						}
 					});
 				} else {
 					Sfdc.canvas.oauth.logout();
@@ -33,7 +33,8 @@
 				console.log("Canvas sent", payloadObj);
 			}
 			function listenEvents() {
-				Sfdc.canvas.client.subscribe(sr.client, {
+                var client = Sfdc.canvas.oauth.client();
+				Sfdc.canvas.client.subscribe(client, {
 					name: "recordchanged",
 					onData: function (e) {
 						console.log("Canvas recevied", e);
@@ -67,10 +68,9 @@
 					}, client);
 
 					Sfdc.canvas.byId("events").style = "display:block";
+                    listenEvents();
 				}
 				login.onclick = loginHandler;
-
-				listenEvents();
 			});
 		</script>
 		<h1 id="header">Canvas OAuth App</h1>
