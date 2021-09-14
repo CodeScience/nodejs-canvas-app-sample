@@ -1,65 +1,86 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <link href="jsonTree/jsonTree.css" rel="stylesheet" />
-    <script type="text/javascript" src="canvas-js-sdk/js/canvas-all.js"></script>
-    <script type="text/javascript" src="jsonTree/jsonTree.js"></script>
-</head>
-<body>
-    <script>
+	<head>
+		<link href="jsonTree/jsonTree.css" rel="stylesheet" />
+		<script type="text/javascript" src="canvas-js-sdk/js/canvas-all.js"></script>
+		<script type="text/javascript" src="jsonTree/jsonTree.js"></script>
+	</head>
+	<body>
+		<script>
+			function loginHandler(e) {
+				var uri;
+				if (!Sfdc.canvas.oauth.loggedin()) {
+					uri = Sfdc.canvas.oauth.loginUrl();
+					Sfdc.canvas.oauth.login({
+						uri: uri,
+						params: {
+							response_type: "token",
+							client_id: "<%= consumerKey %>",
+							redirect_uri: encodeURIComponent(window.location.protocol + "//" + window.location.hostname + "/callback.html"),
+						},
+					});
+				} else {
+					Sfdc.canvas.oauth.logout();
+					login.innerHTML = "Login";
+					Sfdc.canvas.byId("oauth").innerHTML = "";
+				}
+				return false;
+			}
+			function fireEvent() {
+				var client = Sfdc.canvas.oauth.client();
+				console.log(client);
+				Sfdc.canvas.client.publish(client, { name: "suggestion", payload: { recommendation: "Verify identity" } });
+				console.log("Canvas sent", payloadObj);
+			}
+			function listenEvents() {
+				Sfdc.canvas.client.subscribe(sr.client, {
+					name: "recordchanged",
+					onData: function (e) {
+						console.log("Canvas recevied", e);
+						var para = document.createElement("p");
+						var node = document.createTextNode("Got data at => " + new Date() + JSON.stringify(e));
+						para.appendChild(node);
+						document.querySelector("#messages").appendChild(para);
+					},
+				});
+			}
 
-        function loginHandler(e) {
-            var uri;
-            if (! Sfdc.canvas.oauth.loggedin()) {
-                uri = Sfdc.canvas.oauth.loginUrl();
-                Sfdc.canvas.oauth.login(
-                    {uri : uri,
-                        params: {
-                            response_type : "token",
-                            client_id : "<%= consumerKey %>",
-                            redirect_uri : encodeURIComponent(window.location.protocol + "//" + window.location.hostname + "/callback.html")
-                        }});
-            }
-            else {
-                Sfdc.canvas.oauth.logout();
-                login.innerHTML = "Login";
-                Sfdc.canvas.byId("oauth").innerHTML = "";
-            }
-            return false;
-        }
+			// Bootstrap the page once the DOM is ready.
+			Sfdc.canvas(function () {
+				// On Ready...
+				var login = Sfdc.canvas.byId("login"),
+					loggedIn = Sfdc.canvas.oauth.loggedin(),
+					token = Sfdc.canvas.oauth.token();
+				login.innerHTML = loggedIn ? "Logout" : "Login";
+				if (loggedIn) {
+					// Only displaying part of the OAuth token for better formatting.
+					Sfdc.canvas.byId("oauth").innerHTML = Sfdc.canvas.oauth.token().substring(1, 40) + "…";
 
-        // Bootstrap the page once the DOM is ready.
-        Sfdc.canvas(function() {
-            // On Ready...
-            var login    = Sfdc.canvas.byId("login"),
-                loggedIn = Sfdc.canvas.oauth.loggedin(),
-                token = Sfdc.canvas.oauth.token()
-            login.innerHTML = (loggedIn) ? "Logout" : "Login";
-            if (loggedIn) {
-                 // Only displaying part of the OAuth token for better formatting.
-                Sfdc.canvas.byId("oauth").innerHTML = Sfdc.canvas.oauth.token()
-                    .substring(1,40) + "…";
+					var client = Sfdc.canvas.oauth.client();
+					console.log(client);
+					Sfdc.canvas.client.ctx(function (msg) {
+						if (msg.status !== 200) {
+							alert("Error: " + msg.status);
+							return;
+						}
+						jsonTree.create(msg, Sfdc.canvas.byId("wrapper"));
+					}, client);
 
-                    var client = Sfdc.canvas.oauth.client();
-                    console.log(client);
-                    Sfdc.canvas.client.ctx(function(msg) {
-                        if (msg.status !== 200) {
-                           alert("Error: " + msg.status);
-                           return;
-                        }
-                        jsonTree.create(msg, Sfdc.canvas.byId("wrapper"));
-                    }, client);
-            }
-            login.onclick=loginHandler;
-        });
-    </script>
-    <h1 id="header">Canvas OAuth App</h1>
-    <div>
-        access_token = <span id="oauth"></span>
-    </div>
-    <div>
-        <a id="login" href="#">Login</a><br/>
-    </div>
-    <div id="wrapper"></div>
-</body>
+					Sfdc.canvas.byId("events").style = "display:block";
+				}
+				login.onclick = loginHandler;
+
+				listenEvents();
+			});
+		</script>
+		<h1 id="header">Canvas OAuth App</h1>
+		<div>access_token = <span id="oauth"></span></div>
+		<div><a id="login" href="#">Login</a><br /></div>
+		<div id="events" style="display: none">
+			<button onclick="fireEvent();">Fire Event</button>
+			<h2>Listening to Events</h2>
+			<div id="messages"></div>
+		</div>
+		<div id="wrapper"></div>
+	</body>
 </html>
