@@ -2,7 +2,7 @@ var express = require('express'),
     request = require('request'),
     QRCode = require('qrcode'),
     decode = require('salesforce-signed-request'),
-    oauthConsumerSecret = process.env.OAUTH_CONSUMER_SECRET,
+    oAuthConsumerKey = process.env.OAUTH_CONSUMER_KEY,
     signedRequestConsumerSecret = process.env.SIGNED_REQUEST_CONSUMER_SECRET,
     app = express();
 
@@ -50,7 +50,7 @@ app.post('/signedrequest', function(req, res) {
 });
 
 app.get('/oauth', function(req, res) {
-    res.render('oauth', {consumerSecret: oauthConsumerSecret});
+    res.render('oauth', {consumerKey: oAuthConsumerKey});
 });
 
 app.set('port', process.env.PORT || 5000);
