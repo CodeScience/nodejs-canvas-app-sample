@@ -64,6 +64,7 @@
 							alert("Error: " + msg.status);
 							return;
 						}
+						Sfdc.canvas.client.autogrow(client);
 						jsonTree.create(msg, Sfdc.canvas.byId("wrapper"));
 					}, client);
 
@@ -73,7 +74,7 @@
 				login.onclick = loginHandler;
 			});
 		</script>
-		<h1 id="header">Canvas OAuth App</h1>
+		<h1 id="header">Canvas OAuth2 User-Agent Flow</h1>
 		<div>access_token = <span id="oauth"></span></div>
 		<div><a id="login" href="#">Login</a><br /></div>
 		<div id="events" style="display: none">

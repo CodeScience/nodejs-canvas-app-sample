@@ -12,10 +12,10 @@ var express = require("express"),
 
 var oauth2 = new jsforce.OAuth2({
 	// you can change loginUrl to connect to sandbox or prerelease env.
-	// loginUrl : 'https://test.salesforce.com',
+	loginUrl : 'https://momentum-inspiration-1018-dev-ed.cs18.my.salesforce.com',
 	clientId: oAuthWSFConsumerKey,
 	clientSecret: oAuthWSFConsumerSecret,
-	redirectUri: oAuthWSFCallbackURL,
+	redirectUri: oAuthWSFCallbackURL
 });
 
 app.set("view engine", "ejs");
@@ -64,29 +64,26 @@ app.post("/signedrequest", function (req, res) {
 });
 
 app.get("/oauth", function (req, res) {
+	console.log("oauth", req.body, req.params, req.query);
 	res.render("oauth", { consumerKey: oAuthUAFConsumerKey });
 });
 
 app.get("/oauth2", function (req, res) {
-	console.log("oauth2", req);
+	console.log("oauth2", req.body, req.params, req.query);
 	console.log("redirecting to oauth2 auth url");
 	res.redirect(oauth2.getAuthorizationUrl({ scope: "api id web" }));
 });
 
 app.get("/oauth2/callback", function (req, res) {
-	console.log("oauth2 callback", req);
+	console.log("oauth2 callback", req.body, req.params, req.query);
 	var conn = new jsforce.Connection({ oauth2: oauth2 });
-	var code = req.params["code"];
+	var code = req.query.code;
 	conn.authorize(code, function (err, userInfo) {
 		if (err) {
 			return console.error(err);
 		}
-		console.log(conn.accessToken);
-		console.log(conn.refreshToken);
-		console.log(conn.instanceUrl);
-		console.log("User ID: " + userInfo.id);
-		console.log("Org ID: " + userInfo.organizationId);
-		res.render("oauth2", {access_token: conn.accessToken, instance_url : conn.instanceUrl});
+		console.log('authorize response', conn, userInfo);
+		res.render("oauth2", {conn: conn});
 	});
 });
 

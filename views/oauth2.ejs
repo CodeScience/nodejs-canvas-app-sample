@@ -1,22 +1,57 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script type="text/javascript" src="canvas-js-sdk/js/canvas-all.js"></script>
+		<link href="../jsonTree/jsonTree.css" rel="stylesheet" />
+		<script type="text/javascript" src="../canvas-js-sdk/js/canvas-all.js"></script>
+		<script type="text/javascript" src="../jsonTree/jsonTree.js"></script>
 	</head>
 	<body>
-		<div id="context"></div>
 		<script>
 			function callback(msg) {
 				if (msg.status !== 200) {
 					alert("Error: " + msg.status);
 					return;
 				}
-				Sfdc.canvas.byId("context").innerHTML = msg.payload;
+				jsonTree.create(msg, Sfdc.canvas.byId("wrapper"));
+				Sfdc.canvas.byId("events").style = "display:block";
+				listenEvents();
 			}
-            Sfdc.canvas.oauth.token('<%= access_token %>');
-            Sfdc.canvas.oauth.instanceUrl('<%= instance_url %>');
-			var client = Sfdc.canvas.oauth.client();
-            Sfdc.canvas.client.ctx(callback, client);
+			function fireEvent() {
+				Sfdc.canvas.client.publish(client, { name: "suggestion", payload: { recommendation: "Verify identity" } });
+				console.log("Canvas sent", payloadObj);
+			}
+			function listenEvents() {
+				Sfdc.canvas.client.subscribe(client, {
+					name: "recordchanged",
+					onData: function (e) {
+						console.log("Canvas recevied", e);
+						var para = document.createElement("p");
+						var node = document.createTextNode("Got data at => " + new Date() + JSON.stringify(e));
+						para.appendChild(node);
+						document.querySelector("#messages").appendChild(para);
+					},
+				});
+			}
+
+			var client = {};
+			// Bootstrap the page once the DOM is ready.
+			Sfdc.canvas(function () {
+				client = {
+					oauthToken: "<%= conn.accessToken %>",
+					instanceId: window.name.replace('canvas-outer-',''),// hack ? "_:canvas_demo_oauth_wsf:j_id0:j_id2:canvasapp",
+					targetOrigin: "<%= conn.instanceUrl %>",
+				};
+				Sfdc.canvas.client.ctx(callback, client);
+				Sfdc.canvas.client.autogrow(client);
+			});
 		</script>
+		<h1 id="header">Canvas OAuth2 Web-Server Flow</h1>
+		<div>access_token = <span id="oauth"></span></div>
+		<div id="events" style="display: none">
+			<button onclick="fireEvent();">Fire Event</button>
+			<h2>Listening to Events</h2>
+			<div id="messages"></div>
+		</div>
+		<div id="wrapper"></div>
 	</body>
 </html>
