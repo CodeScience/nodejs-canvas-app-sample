@@ -4,6 +4,8 @@
     "repository": "https://github.com/CodeScience/nodejs-canvas-app-sample",
     "env": {
         "OAUTH_CONSUMER_KEY": "21B5054D4C9D53D...",
+        "OAUTH_CONSUMER_SECRET": "21B5054D4C9D53D...",
+        "OAUTH_CALLBACK_URL": "21B5054D4C9D53D...",
         "SIGNED_REQUEST_CONSUMER_SECRET": "21B5054D4C9D53D..."
     }
 }

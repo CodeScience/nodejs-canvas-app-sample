@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="canvas-js-sdk/js/canvas-all.js"></script>
+	</head>
+	<body>
+		<div id="context"></div>
+		<script>
+			function callback(msg) {
+				if (msg.status !== 200) {
+					alert("Error: " + msg.status);
+					return;
+				}
+				Sfdc.canvas.byId("context").innerHTML = msg.payload;
+			}
+            Sfdc.canvas.oauth.token('<%= access_token %>');
+            Sfdc.canvas.oauth.instanceUrl('<%= instance_url %>');
+			var client = Sfdc.canvas.oauth.client();
+            Sfdc.canvas.client.ctx(callback, client);
+		</script>
+	</body>
+</html>
