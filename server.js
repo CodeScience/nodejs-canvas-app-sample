@@ -2,9 +2,10 @@ var express = require("express"),
 	request = require("request"),
 	QRCode = require("qrcode"),
 	decode = require("salesforce-signed-request"),
-	oAuthConsumerKey = process.env.OAUTH_CONSUMER_KEY,
-	oAuthConsumerSecret = process.env.OAUTH_CONSUMER_SECRET,
-	oAuthCallbackURL = process.env.OAUTH_CALLBACK_URL,
+	oAuthUAFConsumerKey = process.env.OAUTH_UAF_CONSUMER_KEY,
+	oAuthWSFConsumerKey = process.env.OAUTH_WSF_CONSUMER_KEY,
+	oAuthWSFConsumerSecret = process.env.OAUTH_WSF_CONSUMER_SECRET,
+	oAuthWSFCallbackURL = process.env.OAUTH_WSF_CALLBACK_URL,
 	signedRequestConsumerSecret = process.env.SIGNED_REQUEST_CONSUMER_SECRET,
 	app = express(),
 	jsforce = require("jsforce");
@@ -12,9 +13,9 @@ var express = require("express"),
 var oauth2 = new jsforce.OAuth2({
 	// you can change loginUrl to connect to sandbox or prerelease env.
 	// loginUrl : 'https://test.salesforce.com',
-	clientId: oAuthConsumerKey,
-	clientSecret: oAuthConsumerSecret,
-	redirectUri: oAuthCallbackURL,
+	clientId: oAuthWSFConsumerKey,
+	clientSecret: oAuthWSFConsumerSecret,
+	redirectUri: oAuthWSFCallbackURL,
 });
 
 app.set("view engine", "ejs");
@@ -63,7 +64,7 @@ app.post("/signedrequest", function (req, res) {
 });
 
 app.get("/oauth", function (req, res) {
-	res.render("oauth", { consumerKey: oAuthConsumerKey });
+	res.render("oauth", { consumerKey: oAuthUAFConsumerKey });
 });
 
 app.get("/oauth2", function (req, res) {
