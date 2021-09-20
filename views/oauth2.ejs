@@ -8,10 +8,12 @@
 	<body>
 		<script>
 			function callback(msg) {
+				debugger;
 				if (msg.status !== 200) {
 					alert("Error: " + msg.status);
 					return;
 				}
+				Sfdc.canvas.byId("oauth").innerHTML = client.oauthToken.substring(1, 40) + "…";
 				jsonTree.create(msg, Sfdc.canvas.byId("wrapper"));
 				Sfdc.canvas.byId("events").style = "display:block";
 				listenEvents();
@@ -41,6 +43,7 @@
 					instanceId: window.name.replace('canvas-outer-',''),// hack ? "_:canvas_demo_oauth_wsf:j_id0:j_id2:canvasapp",
 					targetOrigin: "<%= conn.instanceUrl %>",
 				};
+				debugger;
 				Sfdc.canvas.client.ctx(callback, client);
 				Sfdc.canvas.client.autogrow(client);
 			});
