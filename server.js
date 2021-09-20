@@ -12,7 +12,6 @@ var express = require("express"),
 
 var oauth2 = new jsforce.OAuth2({
 	// you can change loginUrl to connect to sandbox or prerelease env.
-	loginUrl : 'https://momentum-inspiration-1018-dev-ed.cs18.my.salesforce.com',
 	clientId: oAuthWSFConsumerKey,
 	clientSecret: oAuthWSFConsumerSecret,
 	redirectUri: oAuthWSFCallbackURL
@@ -71,6 +70,7 @@ app.get("/oauth", function (req, res) {
 app.get("/oauth2", function (req, res) {
 	console.log("oauth2", req.body, req.params, req.query);
 	console.log("redirecting to oauth2 auth url");
+	oauth2.loginUrl = req.query.loginUrl;
 	res.redirect(oauth2.getAuthorizationUrl({ scope: "api id web" }));
 });
 
