@@ -40,7 +40,7 @@
 			Sfdc.canvas(function () {
 				client = {
 					oauthToken: "<%= conn.accessToken %>",
-					instanceId: window.name.replace('canvas-outer-',''),// hack ? "_:canvas_demo_oauth_wsf:j_id0:j_id2:canvasapp",
+					instanceId: window.name.replace('canvas-inner-',''), // hack ? "_:canvas_demo_oauth_wsf:j_id0:j_id2:canvasapp",
 					targetOrigin: "<%= conn.instanceUrl %>",
 				};
 				debugger;
