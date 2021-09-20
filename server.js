@@ -8,14 +8,8 @@ var express = require("express"),
 	oAuthWSFCallbackURL = process.env.OAUTH_WSF_CALLBACK_URL,
 	signedRequestConsumerSecret = process.env.SIGNED_REQUEST_CONSUMER_SECRET,
 	app = express(),
-	jsforce = require("jsforce");
-
-var oauth2 = new jsforce.OAuth2({
-	// you can change loginUrl to connect to sandbox or prerelease env.
-	clientId: oAuthWSFConsumerKey,
-	clientSecret: oAuthWSFConsumerSecret,
-	redirectUri: oAuthWSFCallbackURL
-});
+	jsforce = require("jsforce"),
+	oauth2 = {};
 
 app.set("view engine", "ejs");
 app.use(express.json());
@@ -70,7 +64,13 @@ app.get("/oauth", function (req, res) {
 app.get("/oauth2", function (req, res) {
 	console.log("oauth2", req.body, req.params, req.query);
 	console.log("redirecting to oauth2 auth url");
-	oauth2.loginUrl = req.query.loginUrl;
+	oauth2 = new jsforce.OAuth2({
+		// you can change loginUrl to connect to sandbox or prerelease env.
+		loginUrl: req.query.loginUrl,
+		clientId: oAuthWSFConsumerKey,
+		clientSecret: oAuthWSFConsumerSecret,
+		redirectUri: oAuthWSFCallbackURL
+	});
 	res.redirect(oauth2.getAuthorizationUrl({ scope: "api id web" }));
 });
 
