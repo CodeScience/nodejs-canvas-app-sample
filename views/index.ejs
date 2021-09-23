@@ -131,7 +131,7 @@
                         var para = document.createElement("p");
 						var node = document.createTextNode("Got Platform Event data at => " + new Date() + JSON.stringify(data));
 						para.appendChild(node);
-                        Sfdc.canvas.byId("streamingEvents").apendChild(para);
+                        document.querySelector("#streamingEvents").apendChild(para);
                     }, 
                     onComplete: function(data) { 
                         console.log("onComplete done", data);
