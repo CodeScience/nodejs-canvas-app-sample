@@ -1,57 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <link href="styles.css" rel="stylesheet">
-    <script src="canvas-js-sdk/js/canvas-all.js" type="text/javascript"></script>
-</head>
-<body>
-<div class="canvas-app">
-    <img src="nodejs.png"/>
-    <p>Hello, <%= context.user.firstName %>. This is a web app written in Node.js embedded in your Salesforce page (It could also be written in any other language).</p>
-    <p>It is aware of its environment. For example, here are a few things it knows:</p>
-    <table>
-        <tr><td>User:</td><td><%= context.user.fullName %></td></tr>
-        <tr><td>Object:</td><td><%= context.environment.record.attributes.type %></td></tr>
-        <tr><td>Id:</td><td><%= context.environment.record.Id %></td></tr>
-    </table>
-    <p>It can also access more data in Salesforce using the REST APIs. With context and APIs, Canvas makes it easy to integrate applications written in any language inside your Salesforce pages.</p>
-    <p>For example, the QR Code below is generated in Node.js. Scan it to create a contact on your mobile phone:</p>
-    <img src="<%- imgSrc %>" />
-    <div>
-        <button onclick="fireEvent();">Fire Event</button>
-        <h2>Listening to Events</h2>
-        <div id="messages"></div>
-    </div>
-</div>
+	<head>
+		<meta charset="utf-8" />
+		<link href="styles.css" rel="stylesheet" />
+		<script src="canvas-js-sdk/js/canvas-all.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<div class="canvas-app">
+			<img src="nodejs.png" />
+			<p>
+				Hello, <%= context.user.firstName %>. This is a web app written in Node.js embedded in your Salesforce page (It could also be written in any
+				other language).
+			</p>
+			<p>It is aware of its environment. For example, here are a few things it knows:</p>
+			<table>
+				<tr>
+					<td>User:</td>
+					<td><%= context.user.fullName %></td>
+				</tr>
+				<tr>
+					<td>Object:</td>
+					<td><%= context.environment.record.attributes.type %></td>
+				</tr>
+				<tr>
+					<td>Id:</td>
+					<td><%= context.environment.record.Id %></td>
+				</tr>
+			</table>
+			<p>
+				It can also access more data in Salesforce using the REST APIs. With context and APIs, Canvas makes it easy to integrate applications written in
+				any language inside your Salesforce pages.
+			</p>
+			<p>For example, the QR Code below is generated in Node.js. Scan it to create a contact on your mobile phone:</p>
+			<img src="<%- imgSrc %>" />
+			<div>
+				<button onclick="fireEvent();">Fire Event</button>
+				<h2>Listening to Events</h2>
+				<div id="messages"></div>
+			</div>
 
-<script type="text/javascript">
-    var sr = {};
-    var payloadObj = { recommendation: "Verify identity" };
-    Sfdc.canvas(function () {
-        sr = JSON.parse('<%- sr %>');
-        console.log(sr);
-    });
-    function fireEvent() {
-        console.log(sr.client);
-        Sfdc.canvas.client.publish(sr.client, { name: "suggestion", payload: payloadObj });
-        console.log('Canvas sent', payloadObj);
-    }
-    function listenEvents() {
-        Sfdc.canvas.client.subscribe(sr.client,
-            {
-                name: 'recordchanged', onData: function (e) {
-                    console.log('Canvas recevied', e);
-                    var para = document.createElement("p");
-                    var node = document.createTextNode('Got data at => ' + new Date() + JSON.stringify(e));
-                    para.appendChild(node);
-                    document.querySelector('#messages').appendChild(para);
-                }
-            }
-        );
-    }
-    Sfdc.canvas(function () {
-        listenEvents();
-    });
-</script>
-</body>
+			<div>
+				<input type="text" placeholder="message" id="post" />
+				<button onclick="postToChatter();">Post to Chatter</button>
+			</div>
+			<h1>List of Chatter Users</h1>
+			<div id="chatter-users"></div>
+		</div>
+
+		<script type="text/javascript">
+			var sr = {};
+			var payloadObj = { recommendation: "Verify identity" };
+			Sfdc.canvas(function () {
+				sr = JSON.parse("<%- sr %>");
+				// Reference the Chatter user's URL from Context.Links object.
+				var chatterUsersUrl = sr.context.links.chatterUsersUrl;
+
+				// Make an XHR call back to salesforce through the supplied browser proxy.
+				Sfdc.canvas.client.ajax(chatterUsersUrl, {
+					client: sr.client,
+					success: function (data) {
+						// Make sure the status code is OK.
+						if (data.status === 200) {
+							data.payload.users.forEach((u) => {
+								var img = document.createElement("img");
+								img.src = u.phone.smallPhotoUrl;
+								document.querySelector("#messages").appendChild(img);
+
+								var para = document.createElement("p");
+								var node = document.createTextNode(u.displayName);
+								para.appendChild(node);
+								document.querySelector("#messages").appendChild(para);
+							});
+						}
+					},
+				});
+			});
+			function postToChatter() {
+				var post = Sfdc.canvas.byId("post").value;
+				// Reference the Chatter user's URL from Context.Links object.
+				var url = sr.context.links.chatterFeedsUrl + "/news/" + sr.context.user.userId + "/feed-items";
+				var body = { body: { messageSegments: [{ type: "Text", text: post }] } };
+
+				Sfdc.canvas.client.ajax(url, {
+					client: sr.client,
+					method: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(body),
+					success: function (data) {
+						if (201 === data.status) {
+							alert("Success");
+						}
+					},
+				});
+			}
+			function fireEvent() {
+				console.log(sr.client);
+				Sfdc.canvas.client.publish(sr.client, { name: "suggestion", payload: payloadObj });
+				console.log("Canvas sent", payloadObj);
+			}
+			function listenEvents() {
+				Sfdc.canvas.client.subscribe(sr.client, {
+					name: "recordchanged",
+					onData: function (e) {
+						console.log("Canvas recevied", e);
+						var para = document.createElement("p");
+						var node = document.createTextNode("Got data at => " + new Date() + JSON.stringify(e));
+						para.appendChild(node);
+						document.querySelector("#messages").appendChild(para);
+					},
+				});
+			}
+			Sfdc.canvas(function () {
+				listenEvents();
+			});
+		</script>
+	</body>
+</html>
