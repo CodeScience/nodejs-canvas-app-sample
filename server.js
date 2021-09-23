@@ -56,13 +56,13 @@ app.post("/signedrequest", function (req, res) {
 	});
 });
 
-app.get("/oauth", function (req, res) {
-	console.log("oauth", req.body, req.params, req.query);
+app.get("/oauth/uaf", function (req, res) {
+	console.log("oauth uaf", req.body, req.params, req.query);
 	res.render("oauth", { consumerKey: oAuthUAFConsumerKey });
 });
 
-app.get("/oauth2", function (req, res) {
-	console.log("oauth2", req.body, req.params, req.query);
+app.get("/oauth/wsf", function (req, res) {
+	console.log("oauth wsf", req.body, req.params, req.query);
 	console.log("redirecting to oauth2 auth url");
 	oauth2 = new jsforce.OAuth2({
 		// you can change loginUrl to connect to sandbox or prerelease env.
@@ -74,8 +74,8 @@ app.get("/oauth2", function (req, res) {
 	res.redirect(oauth2.getAuthorizationUrl({ scope: "api id web" }));
 });
 
-app.get("/oauth2/callback", function (req, res) {
-	console.log("oauth2 callback", req.body, req.params, req.query);
+app.get("/oauth/wsf/callback", function (req, res) {
+	console.log("oauth wsf callback", req.body, req.params, req.query);
 	var conn = new jsforce.Connection({ oauth2: oauth2 });
 	var code = req.query.code;
 	conn.authorize(code, function (err, userInfo) {
