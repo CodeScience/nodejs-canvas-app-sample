@@ -131,7 +131,7 @@
                         var para = document.createElement("p");
 						var node = document.createTextNode("Got Platform Event data at => " + new Date() + JSON.stringify(data));
 						para.appendChild(node);
-                        document.querySelector("#streamingEvents").apendChild(para);
+                        document.querySelector("#streamingEvents").appendChild(para);
                     }, 
                     onComplete: function(data) { 
                         console.log("onComplete done", data);
