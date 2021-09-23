@@ -38,6 +38,10 @@
 				<h2>Listening to Events</h2>
 				<div id="messages"></div>
 			</div>
+            <div>
+                <h1>Platform Events</h1>
+                <div id="streamingEvents"></div>
+            </div>
 
 			<div>
 				<input type="text" placeholder="message" id="post" />
@@ -54,6 +58,8 @@
 				sr = JSON.parse('<%- sr %>');
                 Sfdc.canvas.client.autogrow(sr.client);
 				getChatterUsers();
+                listenEvents();
+                listenStreamingEvents();
 			});
             function getChatterUsers() {
                 // Reference the Chatter user's URL from Context.Links object.
@@ -114,9 +120,24 @@
 					},
 				});
 			}
-			Sfdc.canvas(function () {
-				listenEvents();
-			});
+			function listenStreamingEvents() {
+                Sfdc.canvas.client.subscribe(sr.client, {
+                    name : 'sfdc.streamingapi', 
+                    params: {
+                        topic:"/topic/CanvasEvent__e"
+                    },
+                    onData: function(data) {
+                        console.log("onData done", data);
+                        var para = document.createElement("p");
+						var node = document.createTextNode("Got Platform Event data at => " + new Date() + JSON.stringify(data));
+						para.appendChild(node);
+                        Sfdc.canvas.byId("#streamingEvents").apendChild(para);
+                    }, 
+                    onComplete: function(data) { 
+                        console.log("onComplete done", data);
+                    }
+                });
+			}
 		</script>
 	</body>
 </html>
