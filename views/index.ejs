@@ -124,7 +124,7 @@
                 Sfdc.canvas.client.subscribe(sr.client, {
                     name : 'sfdc.streamingapi', 
                     params: {
-                        topic:"/topic/CanvasEvent__e"
+                        topic:"/event/CanvasEvent__e"
                     },
                     onData: function(data) {
                         console.log("onData done", data);
