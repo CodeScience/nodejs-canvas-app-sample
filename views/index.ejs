@@ -67,12 +67,12 @@
 							data.payload.users.forEach((u) => {
 								var img = document.createElement("img");
 								img.src = u.photo.smallPhotoUrl;
-								document.querySelector("#messages").appendChild(img);
+								document.querySelector("#chatter-users").appendChild(img);
 
 								var para = document.createElement("p");
 								var node = document.createTextNode(u.displayName);
 								para.appendChild(node);
-								document.querySelector("#messages").appendChild(para);
+								document.querySelector("#chatter-users").appendChild(para);
 							});
 						}
 					},
