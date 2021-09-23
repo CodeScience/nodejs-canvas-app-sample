@@ -52,6 +52,7 @@
 			var payloadObj = { recommendation: "Verify identity" };
 			Sfdc.canvas(function () {
 				sr = JSON.parse('<%- sr %>');
+                Sfdc.canvas.client.autogrow(sr.client);
 				getChatterUsers();
 			});
             function getChatterUsers() {
