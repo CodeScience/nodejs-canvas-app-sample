@@ -43,7 +43,7 @@
         var url =
           sr.context.links.sobjectUrl +
           "Contact/" +
-          sr.context.environment.record.Id;
+          sr.context.environment.parameters.recordId;
         console.log("validating QR code", url);
         Sfdc.canvas.client.ajax(url, {
           client: sr.client,
