@@ -37,6 +37,8 @@ app.post("/signedrequest", function (req, res) {
 
   console.log("I decoded signedrequest", signedRequest);
 
+  var context = signedRequest.context;
+
   if (context.environment?.parameters?.customContext === "record") {
     var context = signedRequest.context,
       oauthToken = signedRequest.client.oauthToken,
@@ -80,8 +82,6 @@ app.post("/signedrequest", function (req, res) {
       });
     });
   } else {
-    var context = signedRequest.context;
-
     var contact = context.environment.record,
       text =
         "MECARD:N:" +
