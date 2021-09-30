@@ -1,4 +1,5 @@
 var express = require("express"),
+  request = require("request"),
   QRCode = require("qrcode"),
   decode = require("salesforce-signed-request"),
   oAuthUAFConsumerKey = process.env.OAUTH_UAF_CONSUMER_KEY,
@@ -36,36 +37,73 @@ app.post("/signedrequest", function (req, res) {
 
   console.log("I decoded signedrequest", signedRequest);
 
-  var context = signedRequest.context;
+  if (context.environment?.parameters?.customContext === "record") {
+    var context = signedRequest.context,
+      oauthToken = signedRequest.client.oauthToken,
+      instanceUrl = signedRequest.client.instanceUrl;
 
-  var contact = context.environment.record,
-    text =
-      "MECARD:N:" +
-      contact.LastName +
-      "," +
-      contact.FirstName +
-      ";TEL:" +
-      contact.Phone +
-      ";EMAIL:" +
-      contact.Email +
-      ";;";
+    // this is not necessary but documented here for demo
+    var query =
+      "SELECT Id, FirstName, LastName, Phone, Email FROM Contact WHERE Id = '" +
+      context.environment.parameters?.recordId +
+      "'";
 
-  console.log("Contact from signed request context", contact);
+    var contactRequest = {
+      url: instanceUrl + "/services/data/v52.0/query?q=" + query,
+      headers: {
+        Authorization: "OAuth " + oauthToken,
+      },
+    };
 
-  QRCode.toDataURL(text, function (err, url) {
-    if (context.environment?.parameters?.customContext === "record") {
-      res.render("qr", {
-        imgSrc: url,
-        sr: JSON.stringify(signedRequest),
+    request(contactRequest, function (err, response, body) {
+      console.log("Contact from API response", response);
+
+      var contact = response,
+        text =
+          "MECARD:N:" +
+          contact.LastName +
+          "," +
+          contact.FirstName +
+          ";TEL:" +
+          contact.Phone +
+          ";EMAIL:" +
+          contact.Email +
+          ";;";
+
+      console.log("Contact from signed request parameters", contact);
+
+      QRCode.toDataURL(text, function (err, url) {
+        res.render("qr", {
+          imgSrc: url,
+          sr: JSON.stringify(signedRequest),
+        });
       });
-    } else {
+    });
+  } else {
+    var context = signedRequest.context;
+
+    var contact = context.environment.record,
+      text =
+        "MECARD:N:" +
+        contact.LastName +
+        "," +
+        contact.FirstName +
+        ";TEL:" +
+        contact.Phone +
+        ";EMAIL:" +
+        contact.Email +
+        ";;";
+
+    console.log("Contact from signed request context record", contact);
+
+    QRCode.toDataURL(text, function (err, url) {
       res.render("index", {
         context: context,
         imgSrc: url,
         sr: JSON.stringify(signedRequest),
       });
-    }
-  });
+    });
+  }
 });
 
 app.get("/oauth/uaf", function (req, res) {
