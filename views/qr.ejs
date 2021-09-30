@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/slds/styles/salesforce-lightning-design-system.min.css"
+    />
+    <script
+      src="/canvas-js-sdk/js/canvas-all.js"
+      type="text/javascript"
+    ></script>
+    <style>
+      html {
+        background: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slds-grid slds-grid_vertical">
+        <img src="<%- imgSrc %>" alt="Contact QR Code" />
+        <button
+              class="slds-button slds-button_brand"
+              onclick="validateQR();"
+            >
+              Validate QR
+            </button>
+    </div>
+    <script type="text/javascript">
+      var sr = {};
+      Sfdc.canvas(function () {
+        sr = JSON.parse('<%- sr %>');
+        Sfdc.canvas.client.resize(sr.client, {
+          height: "250px",
+          width: "400px"
+        });
+        Sfdc.canvas.client.autogrow(sr.client);
+      });
+      function validateQR() {
+        var url =
+          sr.context.links.sobjectUrl +
+          "Contact/" +
+          sr.context.environment.record.Id;
+        console.log("validating QR code", url);
+        Sfdc.canvas.client.ajax(url, {
+          client: sr.client,
+          method: "POST",
+          contentType: "application/json",
+          data: "{QRValidated__c: true}",
+          success: function (data) {
+            if (201 === data.status) {
+              alert("QR Code Validated!");
+            }
+          },
+        });
+      }
+    </script>
+  </body>
+</html>
