@@ -57,7 +57,7 @@
       var sr = {};
       var payloadObj = { recommendation: "Verify identity" };
       Sfdc.canvas(function () {
-        sr = JSON.parse("<%- sr %>");
+        sr = JSON.parse('<%- sr %>');
         console.log(sr);
       });
       function fireEvent() {
