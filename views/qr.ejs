@@ -47,7 +47,7 @@
         console.log("validating QR code", url);
         Sfdc.canvas.client.ajax(url, {
           client: sr.client,
-          method: "POST",
+          method: "PATCH",
           contentType: "application/json",
           data: "{QRValidated__c: true}",
           success: function (data) {
