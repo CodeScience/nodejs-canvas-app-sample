@@ -19,6 +19,7 @@ app.use(
 	})
 );
 app.use(express.static(__dirname + "/public"));
+app.use('/slds', express.static(__dirname + '/node_modules/@salesforce-ux/design-system/assets'));
 
 app.post("/signedrequest", function (req, res) {
 	console.log("I got signedrequest", req.body.signed_request);
