@@ -49,7 +49,7 @@
           client: sr.client,
           method: "PATCH",
           contentType: "application/json",
-          data: "{QRValidated__c: true}",
+          data: '{"QRValidated__c": true}',
           success: function (data) {
             if (201 === data.status) {
               alert("QR Code Validated!");
