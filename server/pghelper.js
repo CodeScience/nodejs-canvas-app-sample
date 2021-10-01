@@ -1,9 +1,9 @@
-var //pg = require("pg"),
-  config = require("./config"),
+var parse = require("pg-connection-string").parse,
   Q = require("q");
-  //databaseURL = config.databaseURL;
-  const {  Client } = require('pg');
-  const databaseURL = process.env.DATABASE_URL;
+const { Client } = require("pg");
+require("dotenv").config();
+const databaseURL = process.env.DATABASE_URL;
+const conf = parse(databaseURL);
 /**
  * Utility function to execute a SQL query against a Postgres database
  * @param sql
@@ -17,10 +17,10 @@ exports.query = function (sql, values, singleItem, dontLog) {
   }
 
   var deferred = Q.defer();
+  
+  const client = new Client(conf);
 
-  const client = new Client();
-
-  client.connect({databaseURL});
+  client.connect();
 
   try {
     client.query(sql, values, (err, res) => {
