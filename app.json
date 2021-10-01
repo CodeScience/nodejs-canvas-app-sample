@@ -2,6 +2,7 @@
     "name": "Canvas Demo",
     "description": "Salesforce Canvas Demo",
     "repository": "https://github.com/CodeScience/nodejs-canvas-app-sample",
+    "addons": ["heroku-postgresql:hobby-dev"],
     "env": {
         "OAUTH_UAF_CONSUMER_KEY": "21B5054D4C9D53D...",
         "OAUTH_WSF_CONSUMER_KEY": "21B5054D4C9D53D...",

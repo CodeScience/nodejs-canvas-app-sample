@@ -3,6 +3,7 @@ var //pg = require("pg"),
   Q = require("q");
   //databaseURL = config.databaseURL;
   const {  Client } = require('pg');
+  const databaseURL = process.env.DATABASE_URL;
 /**
  * Utility function to execute a SQL query against a Postgres database
  * @param sql
@@ -17,15 +18,9 @@ exports.query = function (sql, values, singleItem, dontLog) {
 
   var deferred = Q.defer();
 
-  const client = new Client({
-    user: "postgres",
-    host: "localhost",
-    database: "realty",
-    password: "postgres",
-    port: 5432,
-  });
+  const client = new Client();
 
-  client.connect();
+  client.connect({databaseURL});
 
   try {
     client.query(sql, values, (err, res) => {

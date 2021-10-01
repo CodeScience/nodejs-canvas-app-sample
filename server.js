@@ -115,6 +115,20 @@ app.post("/signedrequest", function (req, res) {
   }
 });
 
+app.post("/realty", function (req, res) {
+  console.log("I got signedrequest", req.body.signed_request);
+
+  // You could save this information in the user session if needed
+  var signedRequest = decode(
+    req.body.signed_request,
+    signedRequestConsumerSecret
+  );
+
+  console.log("I decoded signedrequest", signedRequest);
+
+  res.render("realty", { sr: JSON.stringify(signedRequest) });
+});
+
 app.get("/oauth/uaf", function (req, res) {
   console.log("oauth uaf", req.body, req.params, req.query);
   res.render("oauth", { consumerKey: oAuthUAFConsumerKey });

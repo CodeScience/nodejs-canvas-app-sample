@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lightning Realty</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="assets/styles/salesforce-lightning-design-system.css" rel="stylesheet" type="text/css">
+    <link href="assets/styles/custom-styles.css" rel="stylesheet" type="text/css">
+    <script
+      src="/canvas-js-sdk/js/canvas-all.js"
+      type="text/javascript"
+    ></script>
+</head>
+
+<body>
+<div id="app"></div>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script src="build/js/app.bundle.js"></script>
+<script type="text/javascript">
+    var sr = {};
+    Sfdc.canvas(function () {
+      sr = JSON.parse('<%- sr %>');
+      Sfdc.canvas.client.autogrow(sr.client);
+    });
+</script>
+</body>
+</html>
