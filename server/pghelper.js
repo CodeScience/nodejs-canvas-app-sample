@@ -17,12 +17,13 @@ exports.query = function (sql, values, singleItem, dontLog) {
   }
 
   var deferred = Q.defer();
-  
+
+  console.log('database config', databaseURL, conf);
+
   const client = new Client(conf);
 
-  client.connect();
-
   try {
+    client.connect();
     client.query(sql, values, (err, res) => {
       if (err) {
         deferred.reject(err);
@@ -32,6 +33,7 @@ exports.query = function (sql, values, singleItem, dontLog) {
       client.end();
     });
   } catch (e) {
+    console.error(e);
     deferred.reject(e);
   }
 
