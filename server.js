@@ -1,6 +1,13 @@
 var express = require("express"),
   request = require("request"),
+  compression = require('compression'),
   QRCode = require("qrcode"),
+  properties = require('./server/properties'),
+  contacts = require('./server/contacts'),
+  activities = require('./server/activities'),
+  brokers = require('./server/brokers'),
+  activityTypes = require('./server/activitytypes'),
+  sqlinit = require('./server/sqlinit'),
   decode = require("salesforce-signed-request"),
   oAuthUAFConsumerKey = process.env.OAUTH_UAF_CONSUMER_KEY,
   oAuthWSFConsumerKey = process.env.OAUTH_WSF_CONSUMER_KEY,
@@ -13,6 +20,7 @@ var express = require("express"),
 
 app.set("view engine", "ejs");
 app.use(express.json());
+app.use(compression());
 app.use(
   express.urlencoded({
     extended: true,
@@ -25,6 +33,7 @@ app.use(
     __dirname + "/node_modules/@salesforce-ux/design-system/assets"
   )
 );
+app.use('/', express.static(__dirname + '/www'));
 
 app.post("/signedrequest", function (req, res) {
   console.log("I got signedrequest", req.body.signed_request);
@@ -136,6 +145,30 @@ app.get("/oauth/wsf/callback", function (req, res) {
     res.render("oauth2", { conn: conn });
   });
 });
+
+app.get('/properties', properties.findAll);
+app.get('/properties/:id', properties.findById);
+app.post('/properties', properties.createItem);
+app.put('/properties', properties.updateItem);
+app.delete('/properties/:id', properties.deleteItem);
+
+app.get('/contacts', contacts.findAll);
+app.get('/contacts/:id', contacts.findById);
+app.post('/contacts', contacts.createItem);
+app.put('/contacts', contacts.updateItem);
+app.delete('/contacts/:id', contacts.deleteItem);
+
+app.get('/activities', activities.findAll);
+app.post('/activities', activities.createItem);
+app.delete('/activities/:id', activities.deleteItem);
+
+app.get('/activitytypes', activityTypes.findAll);
+
+app.get('/brokers', brokers.findAll);
+app.get('/brokers/:id', brokers.findById);
+app.post('/brokers', brokers.createItem);
+app.put('/brokers', brokers.updateItem);
+app.delete('/brokers/:id', brokers.deleteItem);
 
 app.set("port", process.env.PORT || 5000);
 
