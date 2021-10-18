@@ -21,6 +21,7 @@
     Sfdc.canvas(function () {
       sr = JSON.parse('<%- sr %>');
       Sfdc.canvas.client.resize(sr.client, {height : sr.environment.dimensions.clientHeight, width : sr.environment.dimensions.clientHeight});
+      Sfdc.canvas.client.autogrow(sr.client);
     });
 </script>
 </body>
