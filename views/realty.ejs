@@ -20,14 +20,7 @@
     var sr = {};
     Sfdc.canvas(function () {
       sr = JSON.parse('<%- sr %>');
-      
-      Sfdc.canvas.client.subscribe(sr.client, {
-        name: "screensize",
-        onData: function (e) {
-          console.log("screensize event recevied", e);
-          Sfdc.canvas.client.resize(sr.client, {height : e.height + "px", width : e.width + "px"});
-        },
-      });
+      Sfdc.canvas.client.resize(sr.client, {height : sr.environment.dimensions.clientHeight, width : sr.environment.dimensions.clientHeight});
     });
 </script>
 </body>
