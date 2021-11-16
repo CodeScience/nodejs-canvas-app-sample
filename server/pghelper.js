@@ -1,5 +1,5 @@
 const Q = require("q");
-const { Client } = require("pg");
+const { Pool } = require("pg");
 /**
  * Utility function to execute a SQL query against a Postgres database
  * @param sql
@@ -14,22 +14,25 @@ exports.query = function (sql, values, singleItem, dontLog) {
 
   var deferred = Q.defer();
 
-  const client = new Client({
+  const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
     ssl: {
       rejectUnauthorized: false
     }
   });
 
   try {
-    client.connect();
-    client.query(sql, values, (err, res) => {
+    pool.connect();
+    pool.query(sql, values, (err, res) => {
       if (err) {
         deferred.reject(err);
       } else {
         deferred.resolve(singleItem ? res.rows[0] : res.rows);
       }
-      client.end();
+      pool.end();
     });
   } catch (e) {
     console.error(e);
