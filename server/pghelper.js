@@ -22,7 +22,7 @@ exports.query = function (sql, values, singleItem, dontLog) {
     ssl: {
       rejectUnauthorized: false
     },
-    Client: pg.native.Client
+    Client: pg.Client
   });
 
   try {
