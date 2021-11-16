@@ -25,15 +25,18 @@ exports.query = function (sql, values, singleItem, dontLog) {
   });
 
   try {
-    pool.connect();
-    pool.query(sql, values, (err, res) => {
+    pool.connect((err, client, release) => {
       if (err) {
-        deferred.reject(err);
-      } else {
-        deferred.resolve(singleItem ? res.rows[0] : res.rows);
+        return console.error('Error acquiring client', err.stack)
       }
-      pool.end();
-    });
+      client.query(sql, values, (err, result) => {
+        release()
+        if (err) {
+          return console.error('Error executing query', err.stack)
+        }
+        console.log(result.rows)
+      })
+    })
   } catch (e) {
     console.error(e);
     deferred.reject(e);
