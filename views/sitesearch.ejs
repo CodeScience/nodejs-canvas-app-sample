@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Site Search</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="assets/styles/salesforce-lightning-design-system.css" rel="stylesheet" type="text/css">
+    <link href="assets/styles/custom-styles.css" rel="stylesheet" type="text/css">
+    <script src="/canvas-js-sdk/js/canvas-all.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <div class="slds-pill_container">
+        <div class="slds-form-element">
+            <label class="slds-form-element__label" for="text-input-id-23">Search</label>
+            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                <svg class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" aria-hidden="true">
+                    <use xlink:href="assets/icons/utility-sprite/svg/symbols.svg#search"></use>
+                </svg>
+                <input type="text" id="text-input-id-23" placeholder="Placeholder text…" class="slds-input" />
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var sr = {};
+        Sfdc.canvas(function () {
+            sr = JSON.parse('<%- sr %>');
+            Sfdc.canvas.client.resize(sr.client, { height: sr.context.environment.dimensions.clientHeight });
+            Sfdc.canvas.client.autogrow(sr.client);
+        });
+    </script>
+</body>
+
+</html>

@@ -35,6 +35,16 @@ app.use(
 );
 app.use('/', express.static(__dirname + '/www'));
 
+app.post("/sitesearch", function (req, res) {
+  var signedRequest = decode(
+    req.body.signed_request,
+    signedRequestConsumerSecret
+  );
+  res.render("sitesearch", {
+    sr: JSON.stringify(signedRequest),
+  });
+});
+
 app.post("/signedrequest", function (req, res) {
   console.log("I got signedrequest", req.body.signed_request);
 
